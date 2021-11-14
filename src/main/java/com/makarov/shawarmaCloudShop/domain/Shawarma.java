@@ -29,6 +29,7 @@ public class Shawarma {
 	@Size(min=0, max=50, message="Name should be between 0 and 50 characters")
 	private String name;
 	
+	@Size(min=2, message="You must choose at least 2 ingredients")
 	@ManyToMany
 	@JoinTable(
 			name="shawarma_ingredients",

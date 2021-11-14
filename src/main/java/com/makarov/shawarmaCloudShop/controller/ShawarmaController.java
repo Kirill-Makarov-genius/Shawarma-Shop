@@ -1,13 +1,21 @@
 package com.makarov.shawarmaCloudShop.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.makarov.shawarmaCloudShop.domain.Ingredient;
+import com.makarov.shawarmaCloudShop.domain.Ingredient.Type;
 import com.makarov.shawarmaCloudShop.domain.Shawarma;
 import com.makarov.shawarmaCloudShop.repository.IngredientRepository;
 import com.makarov.shawarmaCloudShop.repository.ShawarmaRepository;
@@ -27,19 +35,49 @@ public class ShawarmaController {
 		this.ingredientRepository = ingredientRepository;
 	}
 	
+	@GetMapping("/all")
+	public String showAll(Model model) {
+		Iterable<Shawarma> shawarmas = shawarmaRepository.findAll();
+		model.addAttribute("shawarmas", shawarmas);
+		return "showAllShawarmas";
+	}
+	
+	
+	
 	@GetMapping("/create")
 	public String formCreateShawarma(Model model) {
 		model.addAttribute("shawarma", new Shawarma());
-		model.addAttribute("ingredients", ingredientRepository.findAll());
+		groupByType(model);
 		return "formCreateShawarma";
 	}
 	
 	@PostMapping("/create")
-	public String createShawarma(@ModelAttribute("shawarma") Shawarma shawarma) {
-		
+	public String createShawarma(@Valid @ModelAttribute("shawarma") Shawarma shawarma, Errors errors, Model model) {
+		if (errors.hasErrors()) {
+			groupByType(model);
+			return "formCreateShawarma";
+		}
 		shawarmaRepository.save(shawarma);
 		
-		return "redirect:/shawarma/create";
+		return "redirect:/shawarma/all";
+	}
+	
+	
+	@GetMapping("/info/{id}")
+	public String showShaurma(@PathVariable("id") Long id, Model model) {
+		model.addAttribute("shawarma", shawarmaRepository.findById(id).get());
+		return "showShawarma";
+		
+	}
+	
+	 
+	private void groupByType(Model model){
+		Type[] types = Ingredient.Type.values();
+		List<Ingredient> ingredients;
+		for (Type type: types) {
+			ingredients = ingredientRepository.findByTypeIs(type);
+			model.addAttribute(type.toString(), ingredients);
+		}
 	}
 	
 }

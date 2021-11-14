@@ -27,7 +27,7 @@ public class Ingredient {
 	private final Type type;
 	
 	public static enum Type{
-		meat, vegetable
+		meat, vegetable, sauce
 	}
 	
 	

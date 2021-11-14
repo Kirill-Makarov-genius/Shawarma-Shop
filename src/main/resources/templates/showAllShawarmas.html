@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Shawarmas</title>
+</head>
+<body>
+
+<th:block th:each="shawarma: ${shawarmas}">
+
+<p th:text="${shawarma.name}"/>
+<ul>
+	<th:block th:each="ingredient: ${shawarma.ingredients}">
+		<li th:text="${ingredient.name}"/>
+	</th:block>
+</ul>
+
+</th:block>
+
+</body>
+</html>
