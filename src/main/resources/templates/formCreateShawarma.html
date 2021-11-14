@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Create Shawarma</title>
+</head>
+<body>
+
+<h1>Create Shawarma</h1>
+
+<form method="post" th:action="@{/shawarma/create}" th:object="${shawarma}">
+
+<label for="name">Name:</label>
+<input type="text" th:field="*{name}" id=name>
+
+<h3>Ingredients:</h3>
+<th:block th:each="ingredient: ${ingredients}">
+	<input type="checkbox" th:field="*{ingredients}" th:text="${ingredient.name}" th:value="${ingredient.id}">
+	<br/>
+</th:block>
+
+<input type="submit" value="Create">
+</form>
+
+</body>
+</html>
