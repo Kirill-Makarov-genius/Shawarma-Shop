@@ -1,6 +1,7 @@
 package com.makarov.shawarmaCloudShop.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -8,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,11 +67,40 @@ public class ShawarmaController {
 	
 	
 	@GetMapping("/info/{id}")
-	public String showShaurma(@PathVariable("id") Long id, Model model) {
+	public String showShawarma(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("shawarma", shawarmaRepository.findById(id).get());
 		return "showShawarma";
 		
 	}
+	
+	@GetMapping("/edit/{id}")
+	public String formEditShawarma(@PathVariable("id") Long id, Model model) {
+		Optional<Shawarma> shawarma = shawarmaRepository.findById(id);
+		model.addAttribute("shawarma", shawarma.get());
+		groupByType(model);
+		return "formEditShawarma";
+	}
+	
+	@PatchMapping("/edit/{id}")
+	public String editShawarma(@PathVariable("id") Long id, @ModelAttribute("shawarma") Shawarma newShawarma) {
+		Shawarma editShawarma = shawarmaRepository.findById(id).get();
+		editShawarma.setName(newShawarma.getName());
+		editShawarma.setIngredients(newShawarma.getIngredients());
+		shawarmaRepository.save(editShawarma);
+		return "redirect:/shawarma/info/" + id;
+	}
+	
+	@DeleteMapping("delete/{id}")
+	public String deleteShawarma(@PathVariable("id") Long id) {
+		shawarmaRepository.deleteById(id);
+		return "redirect:/shawarma/all";
+	}
+	
+	
+	
+	
+	
+	
 	
 	 
 	private void groupByType(Model model){

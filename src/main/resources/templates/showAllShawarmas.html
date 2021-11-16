@@ -8,7 +8,7 @@
 
 <th:block th:each="shawarma: ${shawarmas}">
 
-<p th:text="${shawarma.name}"/>
+<a th:href="@{/shawarma/info/{id}(id=${shawarma.shawarma_id})}" th:text="${shawarma.name}">Name Shawarma</a>
 <ul>
 	<th:block th:each="ingredient: ${shawarma.ingredients}">
 		<li th:text="${ingredient.name}"/>

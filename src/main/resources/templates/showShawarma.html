@@ -6,13 +6,19 @@
 </head>
 <body>
 <div>
-<h3 th:text="${shawarma.name}">Name</h3>
+<h3 th:text="${shawarma.name}"></h3>
 <ul>
 	<th:block th:each="ingredient: ${shawarma.ingredients}">
 		<li th:text="${ingredient.name}"/>
 	</th:block>
+
+
 </ul>
 
+<a th:href="@{/shawarma/edit/{id}(id=${shawarma.shawarma_id})}">Edit</a>
+<form th:action="@{/shawarma/delete/{id}(id=${shawarma.shawarma_id})}" th:method="delete">
+	<input type="submit" value="Delete" />
+</form>
 
 </div>
 </body>

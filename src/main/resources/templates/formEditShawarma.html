@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<form th:method="patch" th:action="@{/shawarma/edit/{id}(id=${shawarma.shawarma_id})}" th:object="${shawarma}">
+
+<label for="name">Name:</label>
+<input type="text" th:field="*{name}" id=name>
+
+<h2>Ingredients:</h2>
+<h3 style="color: red" th:if="${#fields.hasErrors('ingredients')}" th:errors="*{ingredients}">Name</h3>
+
+<h3>Meats</h3>
+<th:block th:each="ingredient: ${meat}">
+	<input type="checkbox" th:field="*{ingredients}" th:text="${ingredient.name}" th:value="${ingredient.id}">
+	<br/>
+</th:block>
+
+<h3>Vegetables</h3>
+<th:block th:each="ingredient: ${vegetable}">
+	<input type="checkbox" th:field="*{ingredients}" th:text="${ingredient.name}" th:value="${ingredient.id}">
+	<br/>
+</th:block>
+
+<h3>Sauces</h3>
+<th:block th:each="ingredient: ${sauce}">
+	<input type="checkbox" th:field="*{ingredients}" th:text="${ingredient.name}" th:value="${ingredient.id}">
+	<br/>
+</th:block>
+
+<input type="submit" value="Create">
+</form>
+
+</body>
+</html>
