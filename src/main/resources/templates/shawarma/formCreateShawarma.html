@@ -8,7 +8,7 @@
 
 <h1>Create Shawarma</h1>
 
-<form method="post" th:action="@{/shawarma/create}" th:object="${shawarma}">
+<form method="post" th:action="@{/shawarma/create/}" th:object="${shawarma}">
 
 <label for="name">Name:</label>
 <input type="text" th:field="*{name}" id=name>

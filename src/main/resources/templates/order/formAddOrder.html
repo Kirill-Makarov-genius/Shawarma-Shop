@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Add new order</title>
+</head>
+<body>
+<h1>Create Order</h1>
+
+<form method="post" th:action="@{/order/add}" th:object="${order}">
+
+<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+<label for="name">Delivery name</label>
+<input type="text" th:field="*{name}" id="name"/>
+<br/>
+
+<span th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+<label for="city">Delivery city</label>
+<input type="text" th:field="*{city}" id="city"/>
+<br/>
+
+<span th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}"></span>
+<label for="zip">Delivery zip</label>
+<input type="text" th:field="*{zip}" id="zip"/>
+<br/>
+
+<span th:if="${#fields.hasErrors('ccNumber')}" th:errors="*{ccNumber}"></span>
+<label for="ccNumber">Credit card number</label>
+<input type="text" th:field="*{ccNumber}" id="ccNumber"/>
+<br/>
+
+<span th:if="${#fields.hasErrors('ccExpiration')}" th:errors="*{ccExpiration}"></span>
+<label for="ccExpiration">Credit cartd Expiration</label>
+<input type="text" th:field="*{ccExpiration}" id="ccExpiration"/>
+<br/>
+
+<span th:if="${#fields.hasErrors('ccCVV')}" th:errors="*{ccCVV}"></span>
+<label for="ccCVV">CVV code</label>
+<input type="text" th:field="*{ccCVV}" id="ccCVV"/>
+<br/>
+
+<input type="submit" value="Make order!">
+
+</form>
+
+
+</body>
+</html>

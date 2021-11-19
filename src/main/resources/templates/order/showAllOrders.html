@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Orders</title>
+</head>
+<body>
+
+<th:block th:each="order: ${orders}">
+	<h3 th:text="'Name - ' + ${order.name}">Order name</h3>
+	<ol>
+	  <li th:text="'City: ' + ${order.city}">City</li>
+	  <li th:text="'Zip-code: ' + ${order.zip}">Zip code</li>
+	</ol>
+	
+	<h4>Credit Card:</h4>
+	<ul>
+	  <li th:text="'Number: ' + ${order.ccNumber}">Credit Card Number</li>
+	  <li th:text="'Expiration: ' + ${order.ccExpiration}">Creadit Card Expiration</li>
+	  <li th:text="'CVV: ' + ${order.ccCVV}">CVV Code</li>
+	</ul>
+	
+	<h4>Shawarmas Ordered:</h4>
+	<ol th:each="shawarma: ${order.shawarmasOrdered}">
+	  <li th:text="${shawarma.name}">Shawarma's name</li>
+	</ol>
+
+	
+<hr/>
+</th:block>
+
+</body>
+</html>

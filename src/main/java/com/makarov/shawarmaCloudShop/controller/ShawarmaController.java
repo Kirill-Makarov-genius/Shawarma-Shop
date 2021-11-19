@@ -1,5 +1,6 @@
 package com.makarov.shawarmaCloudShop.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.makarov.shawarmaCloudShop.domain.Ingredient;
 import com.makarov.shawarmaCloudShop.domain.Ingredient.Type;
@@ -38,11 +40,13 @@ public class ShawarmaController {
 		this.ingredientRepository = ingredientRepository;
 	}
 	
+
+	
 	@GetMapping("/all")
 	public String showAll(Model model) {
 		Iterable<Shawarma> shawarmas = shawarmaRepository.findAll();
 		model.addAttribute("shawarmas", shawarmas);
-		return "showAllShawarmas";
+		return "shawarma/showAllShawarmas";
 	}
 	
 	
@@ -51,25 +55,28 @@ public class ShawarmaController {
 	public String formCreateShawarma(Model model) {
 		model.addAttribute("shawarma", new Shawarma());
 		groupByType(model);
-		return "formCreateShawarma";
+		return "shawarma/formCreateShawarma";
 	}
 	
-	@PostMapping("/create")
-	public String createShawarma(@Valid @ModelAttribute("shawarma") Shawarma shawarma, Errors errors, Model model) {
+	@PostMapping("/create/")
+	public String createShawarma(@Valid @ModelAttribute("shawarma") Shawarma shawarma,
+			Errors errors, Model model,
+			RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {
 			groupByType(model);
-			return "formCreateShawarma";
+			return "shawarma/formCreateShawarma";
 		}
 		shawarmaRepository.save(shawarma);
+		redirectAttributes.addFlashAttribute("curShawarma", shawarma);
 		
-		return "redirect:/shawarma/all";
+		return "redirect:/order/add";
 	}
 	
 	
 	@GetMapping("/info/{id}")
 	public String showShawarma(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("shawarma", shawarmaRepository.findById(id).get());
-		return "showShawarma";
+		return "shawarma/showShawarma";
 		
 	}
 	
@@ -78,11 +85,17 @@ public class ShawarmaController {
 		Optional<Shawarma> shawarma = shawarmaRepository.findById(id);
 		model.addAttribute("shawarma", shawarma.get());
 		groupByType(model);
-		return "formEditShawarma";
+		return "shawarma/formEditShawarma";
 	}
 	
 	@PatchMapping("/edit/{id}")
-	public String editShawarma(@PathVariable("id") Long id, @ModelAttribute("shawarma") Shawarma newShawarma) {
+	public String editShawarma(@PathVariable("id") Long id,
+			@Valid @ModelAttribute("shawarma") Shawarma newShawarma,
+			Errors errors, Model model) {
+		if (errors.hasErrors()) {
+			groupByType(model);
+			return "shawarma/formEditShawarma";
+		}
 		Shawarma editShawarma = shawarmaRepository.findById(id).get();
 		editShawarma.setName(newShawarma.getName());
 		editShawarma.setIngredients(newShawarma.getIngredients());
