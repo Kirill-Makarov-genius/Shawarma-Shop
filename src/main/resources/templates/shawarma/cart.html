@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Your cart</title>
+</head>
+<body>
+
+
+<a style="font-size: 20px" th:href="@{/shawarma/create}">Create another one</a>
+<br/>
+<a th:href="@{/order/add}">Make order</a>
+<br/>
+
+
+<th:block th:each="shawarma: ${cart}">
+
+<a th:href="@{/shawarma/info/{id}(id=${shawarma.shawarma_id})}" th:text="${shawarma.name}">Name Shawarma</a>
+<ul>
+	<th:block th:each="ingredient: ${shawarma.ingredients}">
+		<li th:text="${ingredient.name}"/>
+	</th:block>
+</ul>
+
+</th:block>
+
+</body>
+</html>

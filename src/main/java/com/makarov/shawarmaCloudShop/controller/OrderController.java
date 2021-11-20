@@ -1,5 +1,9 @@
 package com.makarov.shawarmaCloudShop.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +23,7 @@ import com.makarov.shawarmaCloudShop.repository.OrderRepository;
 
 @Controller
 @RequestMapping("/order")
-@SessionAttributes(value = {"order", "curShawarma"})
+@SessionAttributes({"cart"})
 public class OrderController {
 	
 	
@@ -30,14 +34,11 @@ public class OrderController {
 		this.orderRepository = orderRepository;
 	}
 	
-	@ModelAttribute("order")
-	public Order createOrder() {
-		return new Order();
+	@ModelAttribute("cart")
+	public List<Shawarma> createCart() {
+		return new ArrayList<Shawarma>();
 	}
-	@ModelAttribute("curShawarma")
-	public Shawarma getCurShawarma() {
-		return new Shawarma();
-	}
+
 	
 	@GetMapping("/all")
 	public String showAllOrders(Model model) {
@@ -48,18 +49,25 @@ public class OrderController {
 	
 	
 	@GetMapping("/add")
-	public String formAddOrder(@ModelAttribute("order") Order order, Model model) {
+	public String formAddOrder(Order order, Model model) {
 		model.addAttribute("order", order);
+		System.out.println(model.getAttribute("cart"));
 		return "order/formAddOrder";
 	}
 	
+//FIX THIS. Problem in this constructor
 	@PostMapping("/add")
-	public String addOrder(@Valid @ModelAttribute("order") Order order, Errors errors, Model model) {
+	public String addOrder(@Valid Order order,
+			Errors errors, Model model,
+			HttpServletRequest request) {
 		if (errors.hasErrors()) {
 			return "order/formAddOrder";
 		}
-		order.getShawarmasOrdered().add((Shawarma)model.getAttribute("curShawarma"));
+		@SuppressWarnings("unchecked")
+		List<Shawarma> cart = (List<Shawarma>) model.asMap().get("cart");
+		order.setShawarmasOrdered(cart);
 		orderRepository.save(order);
+		model.addAttribute("cart", new ArrayList<Shawarma>());
 		return "redirect:/order/add";
 	}
 	

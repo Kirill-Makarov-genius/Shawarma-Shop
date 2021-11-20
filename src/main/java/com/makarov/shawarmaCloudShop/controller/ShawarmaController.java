@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.makarov.shawarmaCloudShop.domain.Ingredient;
@@ -27,6 +29,7 @@ import com.makarov.shawarmaCloudShop.repository.ShawarmaRepository;
 
 @Controller
 @RequestMapping("/shawarma")
+@SessionAttributes("cart")
 public class ShawarmaController {
 	
 	private ShawarmaRepository shawarmaRepository;
@@ -40,13 +43,23 @@ public class ShawarmaController {
 		this.ingredientRepository = ingredientRepository;
 	}
 	
-
+	@ModelAttribute("cart")
+	public List<Shawarma> createCart(){
+		return new ArrayList<>();
+	}
+	
+	
 	
 	@GetMapping("/all")
 	public String showAll(Model model) {
 		Iterable<Shawarma> shawarmas = shawarmaRepository.findAll();
 		model.addAttribute("shawarmas", shawarmas);
 		return "shawarma/showAllShawarmas";
+	}
+	
+	@GetMapping("/cart")
+	public String cart(@ModelAttribute("cart") List<Shawarma> cart) {
+		return "shawarma/cart";
 	}
 	
 	
@@ -59,17 +72,19 @@ public class ShawarmaController {
 	}
 	
 	@PostMapping("/create/")
-	public String createShawarma(@Valid @ModelAttribute("shawarma") Shawarma shawarma,
+	public String createShawarma(
+			@Valid Shawarma shawarma,
 			Errors errors, Model model,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("cart") List<Shawarma> cart) {
 		if (errors.hasErrors()) {
 			groupByType(model);
 			return "shawarma/formCreateShawarma";
 		}
+
+		cart.add(shawarma);
 		shawarmaRepository.save(shawarma);
-		redirectAttributes.addFlashAttribute("curShawarma", shawarma);
 		
-		return "redirect:/order/add";
+		return "redirect:/shawarma/cart";
 	}
 	
 	
@@ -79,6 +94,7 @@ public class ShawarmaController {
 		return "shawarma/showShawarma";
 		
 	}
+	
 	
 	@GetMapping("/edit/{id}")
 	public String formEditShawarma(@PathVariable("id") Long id, Model model) {
@@ -90,7 +106,7 @@ public class ShawarmaController {
 	
 	@PatchMapping("/edit/{id}")
 	public String editShawarma(@PathVariable("id") Long id,
-			@Valid @ModelAttribute("shawarma") Shawarma newShawarma,
+			@Valid Shawarma newShawarma,
 			Errors errors, Model model) {
 		if (errors.hasErrors()) {
 			groupByType(model);
